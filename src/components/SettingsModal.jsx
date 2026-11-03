@@ -4,7 +4,7 @@ import { GEMINI } from "../lib/generateQuiz.js";
 
 export default function SettingsModal({ customKey, onSave, onClose }) {
   const [draft, setDraft] = useState(customKey);
-  const hasDefault = Boolean(GEMINI.envKey);
+  const usingCustom = Boolean(customKey);
 
   const submit = (e) => {
     e.preventDefault();
@@ -16,22 +16,15 @@ export default function SettingsModal({ customKey, onSave, onClose }) {
       <form onSubmit={submit}>
         <div className="status-row">
           <span>
-            <strong>{GEMINI.label} </strong>
-            <small>{GEMINI.model} </small>
+            <strong>{GEMINI.label}</strong>
+            <small>Quizzes are generated on the server</small>
           </span>
-          <span className={`pill ${hasDefault ? "ok" : "warn"}`}>
-            {hasDefault ? "Default key active" : "No default key"}
+          <span className={`pill ${usingCustom ? "warn-soft" : "ok"}`}>
+            {usingCustom ? "Custom key active" : "Server default key"}
           </span>
         </div>
 
-        {!hasDefault && (
-          <p className="note">
-            Add VITE_GEMINI_API_KEY to the .env file to set the default key, or open Advanced below to use a custom
-            key.
-          </p>
-        )}
-
-        <details className="advanced" open={!hasDefault || Boolean(customKey)}>
+        <details className="advanced" open={usingCustom}>
           <summary>Advanced</summary>
           <label className="field-label" htmlFor="custom-key">
             Custom Gemini API key

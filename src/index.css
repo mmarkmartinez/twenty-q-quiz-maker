@@ -252,6 +252,7 @@ a { color: var(--brand); }
 .status-row small { display: block; font-size: 0.8rem; color: var(--muted); }
 .pill { font-size: 0.75rem; font-weight: 600; padding: 4px 10px; border-radius: 999px; white-space: nowrap; }
 .pill.ok { background: rgba(4, 120, 87, 0.14); color: var(--ok); }
+.pill.warn-soft { background: rgba(99, 102, 241, 0.14); color: var(--brand); }
 .pill.warn { background: var(--err-bg); color: var(--err); }
 .advanced { margin-top: 8px; padding: 10px 12px; border: 1px dashed var(--border); border-radius: 12px; }
 .advanced summary { cursor: pointer; font-size: 0.85rem; font-weight: 600; color: var(--muted); }

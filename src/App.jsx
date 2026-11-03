@@ -46,10 +46,7 @@ export default function App() {
   const [splash, setSplash] = useState("show"); // "show" | "fade" | "gone"
   const bottomRef = useRef(null);
 
-  // A custom key from Settings takes priority over the default key in .env
-  const apiKey = customKey || GEMINI.envKey;
-
-  // Loading screen
+  // Loading screen: visible briefly, then fades out
   useEffect(() => {
     const fade = setTimeout(() => setSplash("fade"), 1800);
     const gone = setTimeout(() => setSplash("gone"), 2400);
@@ -88,8 +85,6 @@ export default function App() {
       setInput("");
       return;
     }
-    if (!apiKey) return;
-
     const userMsg = { id: crypto.randomUUID(), role: "user", text: content };
     const next = [...messages, userMsg];
     setMessages(next);
@@ -97,7 +92,7 @@ export default function App() {
     setLoading(true);
 
     try {
-      const result = await askTwentyQ(toApiHistory(next), apiKey);
+      const result = await askTwentyQ(toApiHistory(next), customKey);
       const botMsg =
         result.type === "quiz"
           ? {
@@ -162,15 +157,6 @@ export default function App() {
         </div>
       </header>
 
-      {!apiKey && (
-        <div className="keybar">
-          <span>No API key is set. Add one to the .env file or in Settings.</span>
-          <button className="primary" onClick={() => setModal("settings")}>
-            Open Settings
-          </button>
-        </div>
-      )}
-
       <main className="chat">
         {messages.map((m) => (
           <div key={m.id} className={`row ${m.role}`}>
@@ -186,7 +172,7 @@ export default function App() {
         {messages.length === 1 && (
           <div className="chips">
             {SUGGESTIONS.map((s) => (
-              <button key={s} className="chip" disabled={!apiKey} onClick={() => send(`Make a quiz on ${s}`)}>
+              <button key={s} className="chip" onClick={() => send(`Make a quiz on ${s}`)}>
                 {s}
               </button>
             ))}
@@ -210,10 +196,10 @@ export default function App() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={onKeyDown}
-          placeholder={apiKey ? 'e.g. Make a quiz on JavaScript basics' : "Add an API key to begin"}
-          disabled={!apiKey || loading}
+          placeholder='e.g. Make a quiz on JavaScript basics'
+          disabled={loading}
         />
-        <button type="submit" disabled={!apiKey || loading || !input.trim()}>
+        <button type="submit" disabled={loading || !input.trim()}>
           Send
         </button>
       </form>
