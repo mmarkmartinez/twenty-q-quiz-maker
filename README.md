@@ -1,16 +1,28 @@
-# React + Vite
+# TwentyQ: AI Quiz Maker
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A chat-style quiz maker built with React, JavaScript and Vite.
+Say "Make a quiz on" followed by a topic and TwentyQ generates a 20-item multiple choice quiz,
+downloadable as a Word (.docx) file with an answer key. It uses the Google Gemini API
+(default model `gemini-3.1-flash-lite`).
 
-Currently, two official plugins are available:
+## How the API key is handled
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+The Gemini key lives on the server only. The browser calls `/api/generate`, a serverless function
+(`api/generate.js`) that adds the key and forwards the request to Gemini. The key is never bundled
+into the client code, so it is safe to publish the site publicly.
 
-## React Compiler
+## Run locally
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+cd twenty-q-quiz-maker
+npm install
+```
 
-## Expanding the ESLint configuration
+1. Open `.env` and paste a Gemini key after `GEMINI_API_KEY=` (get one at https://aistudio.google.com/apikey).
+2. Start the app:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+npm run dev
+```
+
+`npm run dev` serves `/api/generate` locally through a small Vite plugin, so no extra tools are needed.

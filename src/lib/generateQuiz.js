@@ -55,7 +55,7 @@ function normalizeQuiz(data) {
 
 /* Request to the serverless function */
 
-async function callApi(history, customKey) {
+async function callApi(history, customKey, document) {
   const headers = { "Content-Type": "application/json" };
   if (customKey) headers["x-user-api-key"] = customKey;
 
@@ -64,7 +64,7 @@ async function callApi(history, customKey) {
     response = await fetch("/api/generate", {
       method: "POST",
       headers,
-      body: JSON.stringify({ history }),
+      body: JSON.stringify({ history, document: document || undefined }),
     });
   } catch {
     throw new Error("Could not reach the server. Check the connection and try again.");
@@ -85,10 +85,11 @@ async function callApi(history, customKey) {
 /**
  * history: [{ role: "user" | "assistant", text: string }]
  * customKey: optional key from Settings, otherwise the server default is used
+ * document: optional { name, text } extracted from an attached PDF
  * Returns { type: "quiz", quiz } or { type: "chat", reply }
  */
-export async function askTwentyQ(history, customKey) {
-  const parsed = extractJson(await callApi(history, customKey));
+export async function askTwentyQ(history, customKey, document) {
+  const parsed = extractJson(await callApi(history, customKey, document));
 
   if (parsed.type === "quiz") return { type: "quiz", quiz: normalizeQuiz(parsed) };
   return { type: "chat", reply: tidy(parsed.reply) || "Send a topic and a 20-item quiz will be created." };

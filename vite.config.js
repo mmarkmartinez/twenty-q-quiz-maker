@@ -42,4 +42,6 @@ function devApi() {
 
 export default defineConfig({
   plugins: [react(), devApi()],
+  build: { target: "esnext" },
+  optimizeDeps: { esbuildOptions: { target: "esnext" } },
 });

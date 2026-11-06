@@ -8,7 +8,7 @@ export default function AboutModal({ onClose }) {
         <img src={icon("2Q_logo")} alt="TwentyQ logo" />
         <div>
           <strong>TwentyQ</strong>
-          <span>AI Quiz Maker, version 1.0.0</span>
+          <span>AI Quiz Maker, version 1.1.0</span>
         </div>
       </div>
 
@@ -18,9 +18,11 @@ export default function AboutModal({ onClose }) {
       </p>
 
       <ul className="about-list">
-        <li>Works with Google Gemini or Anthropic Claude, chosen in Settings.</li>
-        <li>Questions can be previewed in the chat before downloading.</li>
-        <li>API keys stay in this browser and are sent only to the selected provider.</li>
+        <li>Powered by Google Gemini.</li>
+        <li>Quizzes can be taken in the chat with instant feedback and a score.</li>
+        <li>A PDF up to 10 MB can be attached as the source material.</li>
+        <li>Download as a Word file or as a live quiz in a single .html file.</li>
+        <li>A custom API key can be added under Advanced in Settings. It stays in this browser.</li>
       </ul>
 
       <p className="note">AI can make mistakes. Review the questions and answers before using them in class.</p>

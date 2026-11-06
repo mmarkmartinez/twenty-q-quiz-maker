@@ -3,8 +3,19 @@ import { parseRequest } from "../src/lib/parseRequest.js";
 
 const MAX_MESSAGES = 12;
 const MAX_TEXT_LENGTH = 2000;
+const MAX_DOCUMENT_CHARS = 150000;
 
-function validateHistory(history) {
+function validateDocument(doc) {
+  return (
+    doc &&
+    typeof doc.text === "string" &&
+    doc.text.trim().length > 0 &&
+    doc.text.length <= MAX_DOCUMENT_CHARS &&
+    (doc.name === undefined || typeof doc.name === "string")
+  );
+}
+
+function validateHistory(history, hasDocument) {
   if (!Array.isArray(history) || history.length === 0 || history.length > MAX_MESSAGES) return false;
   const wellFormed = history.every(
     (m) =>
@@ -18,7 +29,7 @@ function validateHistory(history) {
 
   // The latest message must be a valid "Make a quiz" request
   const last = history[history.length - 1];
-  return last.role === "user" && parseRequest(last.text).status === "ok";
+  return last.role === "user" && parseRequest(last.text, { hasDocument }).status === "ok";
 }
 
 export default async function handler(req, res) {
@@ -39,7 +50,13 @@ export default async function handler(req, res) {
   }
 
   const history = req.body?.history;
-  if (!validateHistory(history)) {
+  const document = req.body?.document ?? null;
+  const hasDocument = document !== null;
+
+  if (hasDocument && !validateDocument(document)) {
+    return res.status(400).json({ error: "The attached PDF text is missing or too large." });
+  }
+  if (!validateHistory(history, hasDocument)) {
     return res.status(400).json({ error: 'Invalid request. Say "Make a quiz" followed by a topic.' });
   }
 
@@ -49,7 +66,7 @@ export default async function handler(req, res) {
     const upstream = await fetch(geminiUrl(model), {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
-      body: JSON.stringify(buildGeminiBody(history)),
+      body: JSON.stringify(buildGeminiBody(history, document)),
     });
 
     if (!upstream.ok) {
